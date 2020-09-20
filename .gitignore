@@ -1,0 +1,9 @@
+/.gradle/
+/build/
+/.idea/
+/gradle/
+/gradlew
+/gradlew.bat
+/settings.gradle
+/config2.properties
+/song.cache
