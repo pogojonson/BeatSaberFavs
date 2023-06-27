@@ -16,7 +16,8 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.net.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,7 +99,7 @@ public class MainApp {
                     RowData rowData = Utils.getSongCacheEntryAsRowData(songHash);
                     if (rowData == null) {
                         try {
-                            URLConnection conn = new URL("https://beatsaver.com/api/maps/by-hash/" + songHash).openConnection();
+                            URLConnection conn = new URL("https://beatsaver.com/api/maps/hash/" + songHash).openConnection();
                             conn.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
                             try (InputStream is = conn.getInputStream()) {
                                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -124,7 +125,7 @@ public class MainApp {
     }
 
     private RowData parseJsonToRowData(JSONObject json) {
-        String bsrKey = json.get("key").toString();
+        String bsrKey = json.get("id").toString();
 
         JSONObject metadata = (JSONObject) json.get("metadata");
         String mapper = metadata.get("levelAuthorName").toString();
@@ -133,57 +134,24 @@ public class MainApp {
         String songSubName = metadata.get("songSubName").toString();
         long bpm = (long) Float.parseFloat(metadata.get("bpm").toString());
 
-        JSONObject difficulties = (JSONObject) metadata.get("difficulties");
-        List<String> diffs = parseJsonDifficultiesToList(difficulties);
+        JSONArray versions = (JSONArray) json.get("versions");
+        JSONObject versionObject = (JSONObject) versions.get(0);
+        JSONArray diffObject = (JSONArray) versionObject.get("diffs");
+        List<String> diffs = parseJsonDifficultiesToList(diffObject);
 
         JSONObject stats = (JSONObject) json.get("stats");
-        float rating = Float.parseFloat(stats.get("rating").toString());
+        float score = Float.parseFloat(stats.get("score").toString());
 
-        RowData rowData = new RowData(songAuthorName, songName, songSubName, mapper, bsrKey, bpm, rating, String.join(", ", diffs));
+        RowData rowData = new RowData(songAuthorName, songName, songSubName, mapper, bsrKey, bpm, score, String.join(", ", diffs));
         return rowData;
     }
 
-    private class EigeneKlasse {
-        public int a;
-
-        public EigeneKlasse(int a) {
-            this.a = a;
-        }
-
-        public int plus(int b) {
-            return a + b;
-        }
-    }
-
-    private List<String> parseJsonDifficultiesToList(JSONObject difficulties) {
+    private List<String> parseJsonDifficultiesToList(JSONArray difficulties) {
         List<String> diffs = new ArrayList<>();
-        int i = 1;
-        float f = 1.0f;
-        double d = 2.0d;
-        long l = 1111111111111111L;
-        boolean b = true;
-        char c = 'a';
-        int bb = 0xFF;
-        byte bbb = 127;
 
-        EigeneKlasse lul1 = new EigeneKlasse(1);
-        EigeneKlasse lul2 = new EigeneKlasse(2);
-        long temp = l + lul1.plus(2);
-
-        if (Boolean.parseBoolean(difficulties.get("easy").toString())) {
-            diffs.add("Easy");
-        }
-        if (Boolean.parseBoolean(difficulties.get("normal").toString())) {
-            diffs.add("Normal");
-        }
-        if (Boolean.parseBoolean(difficulties.get("hard").toString())) {
-            diffs.add("Hard");
-        }
-        if (Boolean.parseBoolean(difficulties.get("expert").toString())) {
-            diffs.add("Expert");
-        }
-        if (Boolean.parseBoolean(difficulties.get("expertPlus").toString())) {
-            diffs.add("Expert+");
+        for (int diffIdx = 0; diffIdx < difficulties.size(); diffIdx++) {
+            JSONObject diff = (JSONObject) difficulties.get(diffIdx);
+            diffs.add(diff.get("difficulty").toString());
         }
         return diffs;
     }
