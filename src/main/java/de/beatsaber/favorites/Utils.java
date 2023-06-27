@@ -1,4 +1,4 @@
-package de.puffeldings;
+package de.beatsaber.favorites;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;

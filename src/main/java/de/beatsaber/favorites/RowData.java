@@ -1,4 +1,4 @@
-package de.puffeldings;
+package de.beatsaber.favorites;
 
 import lombok.AllArgsConstructor;
 

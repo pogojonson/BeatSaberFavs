@@ -1,4 +1,4 @@
-package de.puffeldings;
+package de.beatsaber.favorites;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -144,8 +143,33 @@ public class MainApp {
         return rowData;
     }
 
+    private class EigeneKlasse {
+        public int a;
+
+        public EigeneKlasse(int a) {
+            this.a = a;
+        }
+
+        public int plus(int b) {
+            return a + b;
+        }
+    }
+
     private List<String> parseJsonDifficultiesToList(JSONObject difficulties) {
         List<String> diffs = new ArrayList<>();
+        int i = 1;
+        float f = 1.0f;
+        double d = 2.0d;
+        long l = 1111111111111111L;
+        boolean b = true;
+        char c = 'a';
+        int bb = 0xFF;
+        byte bbb = 127;
+
+        EigeneKlasse lul1 = new EigeneKlasse(1);
+        EigeneKlasse lul2 = new EigeneKlasse(2);
+        long temp = l + lul1.plus(2);
+
         if (Boolean.parseBoolean(difficulties.get("easy").toString())) {
             diffs.add("Easy");
         }
